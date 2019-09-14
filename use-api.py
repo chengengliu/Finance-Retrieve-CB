@@ -1,3 +1,8 @@
+'''
+Author: Chengen Liu
+This file utilises the commonwealth bank public api, retrieves data and formats it.
+This program is an assistant program for the research purpose of the subject Financial Markets and Instruments FNCE90047.
+'''
 import requests
 import json
 import csv
