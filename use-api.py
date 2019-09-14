@@ -2,19 +2,36 @@ import requests
 import json
 import csv
 
+
+'''
+Main class holds the sending request/ format data functionality
+'''
 class CommonWealth:
     def __init__(self, host_url, headers_):
         self.host_url = host_url
         self.headers_ = headers_
+
     def comwealth_products(self):
+        """
+        Send request to retrieve full description of products
+        :return: the unicode string of retrieved results that are in json format
+        """
         # Retrieve JSON from Com Bank
         r = requests.get(url=self.host_url, headers=self.headers_)
         # print(r.text)
         return r.text
     def output_file(self,json_file):
+        """
+        Output the json format input
+        :param json_file: Json format input
+        """
         with open('comwealth_origin_products.json', 'w') as f:
             json.dump(json_file, f) # Export the file in json format.
     def format_data(self, json_file):
+        """
+        Format the data and output in csv format
+        :param json_file: a file in json format
+        """
         with open("comwealth.csv", 'a') as comwealth:
             csv_writer = csv.writer(comwealth, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
             for i in range(0, json_file["meta"]["totalRecords"]-1):
@@ -28,11 +45,21 @@ class CommonWealth:
 
     # Retrieve details about one product
     def fetch_product(self, product_id):
+        """
+        Retrieve details about one specific product, provided its product id.
+        :param product_id: A specific product id, as required in com wealth bank api description.
+        :return: A json format string
+        """
         r = requests.get(url=self.host_url+"/"+product_id, headers=self.headers_)
         return  r.text
 
 
     def format_product_details(self,product_content, product_name):
+        """
+        Format and ouput the specific product content.
+        :param product_content: The dictionary (after loading the json string) of the specific product
+        :param product_name: The name of the products
+        """
         with open ('comwealth_products_indetail.txt', 'a') as f:
             f.write(product_name)
             f.write("\n")
@@ -45,6 +72,10 @@ class CommonWealth:
     # Fetch the products details (all products)
     # Receive the argument that is a python object.
     def fetch_product_all_details(self, json_file):
+        """
+        Retrieve all products, using prductId
+        :param json_file: The summary of all products.
+        """
         for i in range(0,json_file["meta"]["totalRecords"]-1):
             product = self.fetch_product(json_file["data"]["products"][i]["productId"])   # one product
             dict_product = json.loads(product)
